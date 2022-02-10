@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/action_home" />
+    <item
+        android:id="@+id/action_nav_texture"
+        android:icon="@drawable/ic_texture"
+        android:title="@string/action_texture" />
+    <item
+        android:id="@+id/action_nav_localization"
+        android:enabled="false"
+        android:icon="@drawable/ic_localization"
+        android:title="@string/action_localization" />
+</menu>

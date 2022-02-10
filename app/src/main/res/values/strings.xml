@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Underground DutchGirl</string>
+
+    <string name="action_home">Home</string>
+    <string name="action_texture">Texture Patch</string>
+    <string name="action_localization">Localization Patch</string>
 </resources>
