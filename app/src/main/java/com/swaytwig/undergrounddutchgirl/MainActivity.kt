@@ -15,19 +15,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initNavigationBar()
+        changeFragment(fragmentHome)
     }
 
     private fun initNavigationBar() {
         val navigation = findViewById<BottomNavigationView>(R.id.navigation)
 
-        navigation.run {
-            setOnItemSelectedListener {
-                when(it.itemId) {
-                    R.id.action_nav_home -> changeFragment(fragmentHome)
-                    R.id.action_nav_texture -> changeFragment(fragmentTexture)
-                }
-                true
+        navigation.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.action_nav_home -> changeFragment(fragmentHome)
+                R.id.action_nav_texture -> changeFragment(fragmentTexture)
             }
+            true
         }
     }
     private fun changeFragment(fragment: Fragment) {

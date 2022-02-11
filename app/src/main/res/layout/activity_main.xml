@@ -17,6 +17,7 @@
         android:theme="?attr/actionBarTheme">
 
         <TextView
+            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/primary"
@@ -37,8 +38,8 @@
         android:id="@+id/navigation"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        app:itemBackground="@color/gray0"
-        app:backgroundTint="@color/primary"
+        android:background="@color/gray0"
+        app:itemRippleColor="@color/gray2"
         app:menu="@menu/menu_navigation"
         app:itemIconTint="@drawable/navigation_color"
         app:itemTextColor="@drawable/navigation_color" />

@@ -3,10 +3,12 @@
     <color name="primary">#FFFFFFFF</color>
     <color name="background">@color/gray1</color>
 
+    <color name="link">#FF77BBFF</color>
+
     <color name="gray0">#FF141414</color>
-    <color name="gray1">#FF2B2B2B</color>
-    <color name="gray2">#FF989898</color>
-    <color name="gray3">#FFB6B6B6</color>
-    <color name="gray4">#FFE4E4E4</color>
+    <color name="gray1">#FF3B3B3B</color>
+    <color name="gray2">#FF686868</color>
+    <color name="gray3">#FF969696</color>
+    <color name="gray4">#FFC4C4C4</color>
     <color name="gray5">#FFF4F4F4</color>
 </resources>
