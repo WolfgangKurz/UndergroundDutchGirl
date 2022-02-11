@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.ListFragment
 
-class TextureFragment : Fragment() {
-    private val list:ArrayList<TextureData> = ArrayList<TextureData>()
+class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener {
+    private val list: ArrayList<TextureData> = ArrayList<TextureData>()
+    private var arr: Array<TextureData> = arrayOf<TextureData>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -17,16 +18,22 @@ class TextureFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_texture, container, false)
 
-        list.add(TextureData("1","TEST1"))
-        list.add(TextureData("2","TEST2"))
-        list.add(TextureData("3","TEST3"))
-        list.add(TextureData("4","TEST4"))
-        list.add(TextureData("5","TEST5"))
-        val adapter = TextureAdapter(container!!.context, list)
+        if(list.size == 0) {
+            list.add(TextureData("1", "TEST1"))
+            list.add(TextureData("2", "TEST2"))
+            list.add(TextureData("3", "TEST3"))
+            list.add(TextureData("4", "TEST4"))
+            list.add(TextureData("5", "TEST5"))
+            arr = list.toArray(arrayOfNulls<TextureData>(list.size))
+        }
 
-        val listTextures = v.findViewById<ListView>(R.id.list_textures)
-        listTextures.adapter = adapter
-
+        val listTextures = v.findViewById<ListView>(android.R.id.list)
+        listTextures.adapter = TextureAdapter(requireActivity(), arr, this)
         return v
+    }
+
+    override fun onListSwitchChanged(position: Int, checked: Boolean) {
+        val item = list[position]
+        android.util.Log.e("TEST", item.getText() + ", " + checked.toString())
     }
 }

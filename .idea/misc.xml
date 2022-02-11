@@ -7,21 +7,17 @@
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/drawable/ic_add.xml" value="0.3315" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3315" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/drawable/navigation_color.xml" value="0.3315" />
+        <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/drawable/ripple_gray4.xml" value="0.1955" />
+        <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/drawable/ripple_white.xml" value="0.3315" />
+        <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/layout-v29/layout_texture_item.xml" value="0.1875" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/layout/activity_main.xml" value="0.375" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/layout/fragment_home.xml" value="0.36614583333333334" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/layout/fragment_texture.xml" value="0.36614583333333334" />
+        <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/layout/layout_texture_item.xml" value="0.1875" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/menu/menu_main.xml" value="0.5" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/menu/menu_navigation.xml" value="0.36614583333333334" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1955" />
         <entry key="..\:/Android/Projects/UndergroundDutchGirl/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1955" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/drawable/navigation_color.xml" value="0.193" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/layout/activity_main.xml" value="0.3619791666666667" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/layout/fragment_home.xml" value="0.3619791666666667" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/layout/fragment_texture.xml" value="0.3619791666666667" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/layout/layout_texture_item.xml" value="0.3619791666666667" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/menu/menu_navigation.xml" value="0.18489583333333334" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3145" />
-        <entry key="..\:/Android/UndergroundDutchGirl/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3145" />
       </map>
     </option>
   </component>

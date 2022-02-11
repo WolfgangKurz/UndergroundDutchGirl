@@ -6,8 +6,38 @@
     android:orientation="vertical"
     android:background="@color/gray1">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray0"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="20sp"
+                android:text="@string/texture_apply_to" />
+
+            <Spinner
+                android:id="@+id/spinner_apply"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"
+                android:background="@color/gray4" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
     <ListView
-        android:id="@+id/list_textures"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
