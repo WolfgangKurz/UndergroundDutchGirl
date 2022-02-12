@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.swaytwig.undergrounddutchgirl.TextureData.TextureData
 
 
 class TextureAdapter(context: Context, data: Array<TextureData>, listener: ListSwitchChangedListener) : BaseAdapter() {
@@ -27,11 +30,26 @@ class TextureAdapter(context: Context, data: Array<TextureData>, listener: ListS
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         @SuppressLint("InflateParams")
         val view = convertView ?: inflater.inflate(R.layout.layout_texture_item, null, true)
+        val item = list[position]
+
+        val text = view.findViewById<TextView>(R.id.item_display)
+        text.text = item.text
 
         val switch = view.findViewById<SwitchMaterial>(R.id.item_switch)
-        switch.text = list[position].getText()
         switch.setOnClickListener {
-            listSwitchChangedListener.onListSwitchChanged(position, (it as SwitchMaterial).isChecked)
+            val checked = (it as SwitchMaterial).isChecked
+            item.useOneStore = checked
+            listSwitchChangedListener.onListSwitchChanged(position, checked)
+        }
+        switch.isChecked = item.useOneStore
+
+        view.findViewById<LinearLayout>(R.id.item_switch_false).setOnClickListener {
+            switch.isChecked = false
+            listSwitchChangedListener.onListSwitchChanged(position, false)
+        }
+        view.findViewById<LinearLayout>(R.id.item_switch_true).setOnClickListener {
+            switch.isChecked = true
+            listSwitchChangedListener.onListSwitchChanged(position, true)
         }
 
         return view

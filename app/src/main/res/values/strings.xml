@@ -6,11 +6,19 @@
     <string name="project_name">Project Underground DutchGirl</string>
     <string name="app_by">by Wolfgang Kurz</string>
     <!-- <string name="app_link">https://udg.swaytwig.com/</string> -->
-    <string name="app_link">Not available now</string>
+    <string name="app_link">현재 사용 불가능</string>
+
+    <string name="GRANT_PERMISSION_REQUIRED">사용하기 위해서는 저장소 권한을 설정해야합니다.</string>
+    <string name="TARGET_NOT_FOUND">설치된 대상 게임을 찾을 수 없습니다.</string>
 
     <string name="action_home">Home</string>
-    <string name="action_texture">Texture Patch</string>
-    <string name="action_localization">Localization Patch</string>
+    <string name="action_texture">텍스쳐 패치</string>
+    <string name="action_localization">언어 패치</string>
 
-    <string name="texture_apply_to">Apply to</string>
+    <string name="icon_onestore">OneStore 아이콘</string>
+    <string name="icon_googleplay">Google Play 아이콘</string>
+    <string name="platform_onestore">OneStore</string>
+    <string name="platform_googleplay">Google</string>
+    <string name="do_patch">패치</string>
+    <string name="patch_done">패치 완료</string>
 </resources>

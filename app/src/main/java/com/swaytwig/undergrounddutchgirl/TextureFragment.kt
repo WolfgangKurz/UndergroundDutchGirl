@@ -1,15 +1,44 @@
 package com.swaytwig.undergrounddutchgirl
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ListView
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.ListFragment
+import com.swaytwig.undergrounddutchgirl.TextureData.TextureData
+import com.swaytwig.undergrounddutchgirl.TextureData.TextureDataManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener {
-    private val list: ArrayList<TextureData> = ArrayList<TextureData>()
-    private var arr: Array<TextureData> = arrayOf<TextureData>()
+    private val list = ArrayList<TextureData>()
+    private var arr = arrayOf<TextureData>()
+    private var baseDir = ""
+
+    private val storages: Array<String> by lazy {
+        ContextCompat.getExternalFilesDirs(requireContext(), null)
+            .filterNotNull()
+            .map { it.path.substringBefore("/Android/data", "") }
+            .filter { it.isNotEmpty() }
+            .toTypedArray()
+    }
+
+    private val prefTextureSetKey = "pref_texture_set"
+    private val prefTextureSet: SharedPreferences by lazy {
+        requireContext().getSharedPreferences("TEXTURE_SET", Context.MODE_PRIVATE)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,22 +47,128 @@ class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener
     ): View? {
         val v = inflater.inflate(R.layout.fragment_texture, container, false)
 
-        if(list.size == 0) {
-            list.add(TextureData("1", "TEST1"))
-            list.add(TextureData("2", "TEST2"))
-            list.add(TextureData("3", "TEST3"))
-            list.add(TextureData("4", "TEST4"))
-            list.add(TextureData("5", "TEST5"))
-            arr = list.toArray(arrayOfNulls<TextureData>(list.size))
+        val ctx = requireActivity()
+
+        val platformDir = "Android/data/com.smartjoy.LastOrigin_C"
+
+        if (baseDir.isEmpty()) {
+            for (storage in storages) {
+                val dir = "${storage}/${platformDir}/files/UnityCache/Shared"
+                val f = File(dir)
+                if (f.exists()) {
+                    baseDir = dir
+                    break
+                }
+            }
+            if (baseDir.isEmpty()) {
+                Toast.makeText(ctx, R.string.TARGET_NOT_FOUND, Toast.LENGTH_SHORT).show()
+                return v
+            }
         }
 
-        val listTextures = v.findViewById<ListView>(android.R.id.list)
-        listTextures.adapter = TextureAdapter(requireActivity(), arr, this)
+//        val pref = prefTextureSet.getString(prefTextureSetKey, null)
+//        val textureSet = pref?.split("\n")?.associate {
+//            val kv = it.split('=').toTypedArray()
+//            kv[0] to kv[1]
+//        }
+//            ?: mapOf()
+
+        TextureDataManager.getTextureList {
+            for (item in it) {
+                val key = item.getKey()
+                val hash = item.getHashOneStore()
+
+                val file = File("${baseDir}/${key}/${hash}/__data")
+                if (!file.exists()) continue
+
+                val original = File("${baseDir}/${key}/${hash}/__original")
+                val useOneStore = !original.exists()
+                list.add(
+                    TextureData(
+                        item.getKey(),
+                        item.getKey(),
+                        item.getHashOneStore(),
+                        useOneStore
+                    )
+                )
+            }
+
+            arr = list.toArray(arrayOfNulls<TextureData>(list.size))
+
+            val btnPatch = v.findViewById<Button>(R.id.patch)
+            btnPatch.isEnabled = true
+            btnPatch.setOnClickListener { doPatch(btnPatch) }
+
+            val listTextures = v.findViewById<ListView>(android.R.id.list)
+            listTextures.adapter = TextureAdapter(ctx, arr, this)
+            listTextures.visibility = View.VISIBLE
+
+            val loading = v.findViewById<ProgressBar>(R.id.list_loading)
+            loading.visibility = View.GONE
+        }
+
         return v
     }
 
     override fun onListSwitchChanged(position: Int, checked: Boolean) {
         val item = list[position]
-        android.util.Log.e("TEST", item.getText() + ", " + checked.toString())
+
+        val pref = prefTextureSet.getString(prefTextureSetKey, null)
+        val textureSet = (pref?.split("\n")?.associate {
+            val kv = it.split('=').toTypedArray()
+            kv[0] to kv[1]
+        }
+            ?: mapOf()).toMutableMap()
+
+        textureSet[item.key] = if (checked) "1" else "0"
+        val out = textureSet.toList().joinToString("\n") { "${it.first}=${it.second}" }
+
+        prefTextureSet.edit().putString(prefTextureSetKey, out).apply()
+    }
+
+    private fun doPatch(button: Button) {
+        button.isEnabled = false
+
+        TextureDataManager.getDataVersion {
+            GlobalScope.launch(Dispatchers.IO) {
+                val ver = it
+
+                for (item in list) {
+                    val key = item.key
+                    val hash = item.hash
+
+                    val dir = "${baseDir}/${key}/${hash}"
+                    if (item.useOneStore) {
+                        val original = File("${dir}/__original")
+                        if (!original.exists())
+                            continue
+
+                        val target = File("${dir}/__data")
+                        original.copyTo(target, true)
+                        original.delete()
+                    } else {
+                        val original = File("${dir}/__original")
+                        if (original.exists())
+                            continue
+
+                        val target = File("${dir}/__data")
+                        target.copyTo(original, true)
+
+                        val url = URL("https://live-lastorigin-patch-google.akamaized.net/${ver}/lo_bundle/${key}")
+                        with(url.openConnection() as HttpsURLConnection) {
+                            requestMethod = "GET"
+
+                            val bytes = inputStream.readBytes()
+                            target.writeBytes(bytes)
+                        }
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), R.string.patch_done, Toast.LENGTH_SHORT).show()
+                    button.isEnabled = true
+                }
+            }
+        } // TextureDataManager.getDataVersion
     }
 }

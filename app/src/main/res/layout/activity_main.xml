@@ -20,10 +20,6 @@
         android:id="@+id/navigation"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray0"
-        app:itemRippleColor="@color/gray2"
-        app:menu="@menu/menu_navigation"
-        app:itemIconTint="@drawable/navigation_color"
-        app:itemTextColor="@drawable/navigation_color" />
+        app:menu="@menu/menu_navigation" />
 
 </LinearLayout>

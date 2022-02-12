@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/gray1">
+    android:background="@color/gray1"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -15,26 +14,26 @@
         android:theme="?attr/actionBarTheme">
 
         <LinearLayout
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/action_texture"
                 android:textColor="@color/primary"
-                android:textSize="20sp"
-                android:text="@string/texture_apply_to" />
-
-            <Spinner
-                android:id="@+id/spinner_apply"
-                android:layout_marginStart="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
-                android:background="@color/gray4" />
+                android:textSize="20sp" />
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
+
+    <ProgressBar
+        android:id="@+id/list_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center" />
 
     <ListView
         android:id="@android:id/list"
@@ -42,5 +41,15 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@color/gray2"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"
+        android:scrollbarThumbVertical="@color/gray4"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/patch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:enabled="false"
+        android:text="@string/do_patch" />
 </LinearLayout>

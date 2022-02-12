@@ -1,0 +1,25 @@
+<resources>
+    <string name="ver_code">Night Chick</string>
+
+    <string name="app_icon">App Icon</string>
+    <string name="app_name">Underground DutchGirl</string>
+    <string name="project_name">Project Underground DutchGirl</string>
+    <string name="app_by">by Wolfgang Kurz</string>
+    <!-- <string name="app_link">https://udg.swaytwig.com/</string> -->
+    <string name="app_link">Not available now</string>
+
+    <string name="GRANT_PERMISSION_REQUIRED">To use, "Storage" related permission required.</string>
+    <string name="TARGET_NOT_FOUND">Installed target game not found.</string>
+
+    <string name="action_home">Home</string>
+    <string name="action_texture">Texture Patch</string>
+    <string name="action_localization">Localization Patch</string>
+
+    <string name="icon_onestore">OneStore Icon</string>
+    <string name="icon_googleplay">Google Play Icon</string>
+
+    <string name="platform_onestore">OneStore</string>
+    <string name="platform_googleplay">Google</string>
+    <string name="do_patch">Patch</string>
+    <string name="patch_done">Patch Done</string>
+</resources>

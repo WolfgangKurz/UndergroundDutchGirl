@@ -4,6 +4,8 @@
     <color name="background">@color/gray1</color>
 
     <color name="link">#FF77BBFF</color>
+    <color name="linkLight">#FFAADDFF</color>
+    <color name="red">#FFFF4455</color>
 
     <color name="gray0">#FF141414</color>
     <color name="gray1">#FF3B3B3B</color>

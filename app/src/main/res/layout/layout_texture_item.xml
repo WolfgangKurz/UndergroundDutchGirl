@@ -1,10 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.switchmaterial.SwitchMaterial
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/item_switch"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:textColor="@color/primary"
-    android:background="@drawable/ripple_primary"
-    android:theme="@style/switch_theme" />
+    android:layout_height="wrap_content">
+    <TableRow>
+        <TextView
+            android:id="@+id/item_display"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="0dp"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </TableRow>
+    <TableRow>
+        <LinearLayout
+            android:id="@+id/item_switch_false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingHorizontal="10dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
+            <ImageView
+                android:layout_marginEnd="5dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_googleplay"
+                android:contentDescription="@string/icon_googleplay" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="@string/platform_googleplay"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/item_switch"
+            android:paddingHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:background="@drawable/ripple_primary"
+            android:theme="@style/switch_theme" />
+
+        <LinearLayout
+            android:id="@+id/item_switch_true"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingHorizontal="10dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/platform_onestore"
+                android:textSize="12sp" />
+            <ImageView
+                android:layout_marginStart="5dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_onestore"
+                android:contentDescription="@string/icon_onestore" />
+        </LinearLayout>
+    </TableRow>
+</TableLayout>

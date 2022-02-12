@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="switch_theme" parent="Theme.UndergroundDutchGirl">
+    <style name="switch_theme" parent="Theme.MaterialComponents.DayNight">
         <item name="colorControlActivated">@color/link</item>
-
-        <item name="colorSwitchThumbNormal">@color/gray3</item>
-        <item name="android:colorForeground">@color/gray2</item>
+        <item name="colorSwitchThumbNormal">@color/link</item>
+        <item name="android:colorForeground">@color/link</item>
     </style>
 </resources>
