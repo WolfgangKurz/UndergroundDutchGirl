@@ -8,8 +8,16 @@
     <!-- <string name="app_link">https://udg.swaytwig.com/</string> -->
     <string name="app_link">Not available now</string>
 
-    <string name="GRANT_PERMISSION_REQUIRED">To use, "Storage" related permission required.</string>
-    <string name="TARGET_NOT_FOUND">Installed target game not found.</string>
+    <string name="GRANT_PERMISSION_REQUIRED"><![CDATA[
+        Storage permissions must be grant to use.<br />
+        Please grant storage access rights according to the instructions below.<br /><br />
+        <font color="#e3e3e3">Please click</font> <span style="background:#1E88E5">&nbsp;USE THIS FOLDER&nbsp;</span> <font color="#e3e3e3">on next page.</font>
+    ]]></string>
+    <string name="GRANT_PERMISSION_REQUIRED_TITLE">Grant Permission</string>
+    <string name="TARGET_NOT_FOUND">Installed game not found.</string>
+
+    <string name="BUTTON_YES">I got it</string>
+    <string name="BUTTON_CLOSE">Exit</string>
 
     <string name="action_home">Home</string>
     <string name="action_texture">Texture Patch</string>
@@ -21,5 +29,8 @@
     <string name="platform_onestore">OneStore</string>
     <string name="platform_googleplay">Google</string>
     <string name="do_patch">Patch</string>
+
+    <string name="fetch_failed">Failed to fetch from Underground DutchGirl server.</string>
     <string name="patch_done">Patch Done</string>
+    <string name="patch_failed">Patch Done\nFailed to patch %s files.</string>
 </resources>

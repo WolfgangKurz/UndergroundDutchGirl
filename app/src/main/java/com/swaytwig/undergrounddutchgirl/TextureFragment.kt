@@ -1,34 +1,36 @@
 package com.swaytwig.undergrounddutchgirl
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ListView
-import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.core.content.ContextCompat
+import android.widget.*
 import androidx.fragment.app.ListFragment
 import com.swaytwig.undergrounddutchgirl.TextureData.TextureData
 import com.swaytwig.undergrounddutchgirl.TextureData.TextureDataManager
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.net.URL
-import javax.net.ssl.HttpsURLConnection
 
 class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener {
     private val list = ArrayList<TextureData>()
     private var arr = arrayOf<TextureData>()
 
-    private val prefTextureSetKey = "pref_texture_set"
-    private val prefTextureSet: SharedPreferences by lazy {
-        requireContext().getSharedPreferences("TEXTURE_SET", Context.MODE_PRIVATE)
+    private val client = HttpClient(CIO)
+
+    private suspend fun downloadFile(url: String) = withContext(Dispatchers.IO) {
+        kotlin.runCatching {
+            val ret = client.request<HttpResponse>(url) { method = HttpMethod.Get }
+            if (ret.status == HttpStatusCode.OK)
+                return@withContext ret.readBytes()
+        }
+        null
     }
 
     override fun onCreateView(
@@ -38,48 +40,54 @@ class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener
     ): View? {
         val v = inflater.inflate(R.layout.fragment_texture, container, false)
 
-        val ctx = requireActivity()
+        CoroutineScope(Dispatchers.Main).launch {
+            val ctx = requireActivity()
 
-//        val pref = prefTextureSet.getString(prefTextureSetKey, null)
-//        val textureSet = pref?.split("\n")?.associate {
-//            val kv = it.split('=').toTypedArray()
-//            kv[0] to kv[1]
-//        }
-//            ?: mapOf()
+            val loading = v.findViewById<ProgressBar>(R.id.list_loading)
+            val fetchError = v.findViewById<TextView>(R.id.fetch_error_text)
 
-        val baseDir = Game.gameAssetDir(requireContext())
+            if (arr.isEmpty()) {
+                val textures = TextureDataManager.getTextureList()
+                if (textures == null) {
+                    fetchError.visibility = View.VISIBLE
+                    loading.visibility = View.GONE
+                    return@launch
+                }
 
-        TextureDataManager.getTextureList {
-            for (item in it) {
-                val key = item.getKey()
-                val hash = item.getHashOneStore()
+                for (item in textures) {
+                    val key = item.getKey()
+                    val hash = item.getHashOneStore()
 
-                val file = File("${baseDir}/${key}/${hash}/__data")
-                if (!file.exists()) continue
+//                    if (key != "2dmodel_br_thetis_n") continue // Test
 
-                val original = File("${baseDir}/${key}/${hash}/__original")
-                val useOneStore = !original.exists()
-                list.add(
-                    TextureData(
-                        item.getKey(),
-                        item.getKey(),
-                        item.getHashOneStore(),
-                        useOneStore
+                    val dir = "com.smartjoy.LastOrigin_C/files/UnityCache/Shared/$key/$hash"
+                    val path = "$dir/__data"
+                    val original = "$dir/__original"
+
+                    if (!MFile.isExists(ctx, path)) continue // Source not found
+
+                    val useOneStore = !MFile.isExists(ctx, original)
+                    list.add(
+                        TextureData(
+                            item.getKey(),
+                            item.getKey(),
+                            item.getHashOneStore(),
+                            useOneStore
+                        )
                     )
-                )
-            }
+                }
 
-            arr = list.toArray(arrayOfNulls<TextureData>(list.size))
+                arr = list.toArray(arrayOfNulls<TextureData>(list.size))
+            }
 
             val btnPatch = v.findViewById<Button>(R.id.patch)
             btnPatch.isEnabled = true
             btnPatch.setOnClickListener { doPatch(btnPatch) }
 
             val listTextures = v.findViewById<ListView>(android.R.id.list)
-            listTextures.adapter = TextureAdapter(ctx, arr, this)
+            listTextures.adapter = TextureAdapter(ctx, arr, this@TextureFragment)
             listTextures.visibility = View.VISIBLE
 
-            val loading = v.findViewById<ProgressBar>(R.id.list_loading)
             loading.visibility = View.GONE
         }
 
@@ -87,66 +95,62 @@ class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener
     }
 
     override fun onListSwitchChanged(position: Int, checked: Boolean) {
-        val item = list[position]
-
-        val pref = prefTextureSet.getString(prefTextureSetKey, null)
-        val textureSet = (pref?.split("\n")?.associate {
-            val kv = it.split('=').toTypedArray()
-            kv[0] to kv[1]
-        }
-            ?: mapOf()).toMutableMap()
-
-        textureSet[item.key] = if (checked) "1" else "0"
-        val out = textureSet.toList().joinToString("\n") { "${it.first}=${it.second}" }
-
-        prefTextureSet.edit().putString(prefTextureSetKey, out).apply()
+        // Placeholder
     }
 
     private fun doPatch(button: Button) {
         button.isEnabled = false
 
-        val baseDir = Game.gameAssetDir(requireContext())
+        val ctx = requireContext()
+        CoroutineScope(Dispatchers.Main).launch {
+            val ver = TextureDataManager.getDataVersion()
 
-        TextureDataManager.getDataVersion {
-            GlobalScope.launch(Dispatchers.IO) {
-                val ver = it
+            var failed = 0
+            var total = 0
 
-                for (item in list) {
-                    val key = item.key
-                    val hash = item.hash
+            for (item in list) {
+                val key = item.key
+                val hash = item.hash
 
-                    val dir = "${baseDir}/${key}/${hash}"
-                    if (item.useOneStore) {
-                        val original = File("${dir}/__original")
-                        if (!original.exists())
-                            continue
+                val dir = "com.smartjoy.LastOrigin_C/files/UnityCache/Shared/$key/$hash"
+                if (item.useOneStore) { // patched -> original
+                    val original = "$dir/__original"
+                    if (!MFile.isExists(ctx, original)) // not patched
+                        continue
 
-                        val target = File("${dir}/__data")
-                        original.copyTo(target, true)
-                        original.delete()
-                    } else {
-                        val original = File("${dir}/__original")
-                        if (original.exists())
-                            continue
+                    total++
 
-                        val target = File("${dir}/__data")
-                        target.copyTo(original, true)
+                    MFile.copy(ctx, "$dir/__original", "$dir/__data")
+                    MFile.delete(ctx, "$dir/__original")
+                } else { // original -> patched
+                    val original = "$dir/__original"
+                    if (MFile.isExists(ctx, original)) // already patched
+                        continue
 
-                        val url = URL("https://live-lastorigin-patch-google.akamaized.net/${ver}/lo_bundle/${key}")
-                        with(url.openConnection() as HttpsURLConnection) {
-                            requestMethod = "GET"
+                    MFile.copy(ctx, "$dir/__data", "$dir/__original")
 
-                            val bytes = inputStream.readBytes()
-                            target.writeBytes(bytes)
-                        }
+                    total++
+                    val url = "https://udg.swaytwig.com/db/$ver/$key/__data"
+                    val bytes = downloadFile(url)
+                    if (bytes == null) {
+                        failed++
+                        continue
                     }
-                }
 
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), R.string.patch_done, Toast.LENGTH_SHORT).show()
-                    button.isEnabled = true
+                    MFile.delete(ctx, "$dir/__data")
+                    MFile.write(ctx, "$dir/__data", bytes)
                 }
             }
-        } // TextureDataManager.getDataVersion
+
+            if (failed > 0) {
+                val template = ctx.resources.getString(R.string.patch_failed)
+                val str = String.format(template, "$failed/$total")
+                Toast.makeText(ctx, str, Toast.LENGTH_SHORT)
+                    .show()
+            } else
+                Toast.makeText(ctx, R.string.patch_done, Toast.LENGTH_SHORT).show()
+
+            button.isEnabled = true
+        }
     }
 }

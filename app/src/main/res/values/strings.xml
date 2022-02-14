@@ -8,8 +8,16 @@
     <!-- <string name="app_link">https://udg.swaytwig.com/</string> -->
     <string name="app_link">현재 사용 불가능</string>
 
-    <string name="GRANT_PERMISSION_REQUIRED">사용하기 위해서는 저장소 권한을 설정해야합니다.</string>
-    <string name="TARGET_NOT_FOUND">설치된 대상 게임을 찾을 수 없습니다.</string>
+    <string name="GRANT_PERMISSION_REQUIRED"><![CDATA[
+        사용하기 위해서는 저장소 권한을 설정해야합니다.<br />
+        아래의 지침에 따라 저장소 접근 권한을 설정해주세요.<br /><br />
+        <font color="#e3e3e3">다음 화면에서</font> <span style="background:#1E88E5">&nbsp;이 폴더 사용&nbsp;</span> <font color="#e3e3e3">버튼을 눌러주세요.</font>
+    ]]></string>
+    <string name="GRANT_PERMISSION_REQUIRED_TITLE">권한 설정</string>
+    <string name="TARGET_NOT_FOUND">설치된 게임을 찾을 수 없습니다.</string>
+
+    <string name="BUTTON_YES">알겠습니다</string>
+    <string name="BUTTON_CLOSE">종료</string>
 
     <string name="action_home">Home</string>
     <string name="action_texture">텍스쳐 패치</string>
@@ -20,5 +28,8 @@
     <string name="platform_onestore">OneStore</string>
     <string name="platform_googleplay">Google</string>
     <string name="do_patch">패치</string>
+
+    <string name="fetch_failed">Underground DutchGirl 서버와의 통신에 실패했습니다.</string>
     <string name="patch_done">패치 완료</string>
+    <string name="patch_failed">패치 완료\n%s 파일의 패치에 실패했습니다.</string>
 </resources>

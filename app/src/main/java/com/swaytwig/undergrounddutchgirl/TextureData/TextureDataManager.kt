@@ -1,78 +1,55 @@
 package com.swaytwig.undergrounddutchgirl.TextureData
 
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import java.net.URL
-import javax.net.ssl.HttpsURLConnection
 
 class TextureDataManager {
     companion object {
-        private var dataVersion: String? = null
-        private var dataVersionJob: Job? = null
+        private val client = HttpClient(CIO)
 
-        fun getDataVersion(cb: (ver: String) -> Unit) {
-            if (dataVersion != null)
-                GlobalScope.launch(Dispatchers.Main) { cb(dataVersion!!) }
-            else if (dataVersionJob != null) { // fetching
-                GlobalScope.launch(Dispatchers.Main) {
-                    dataVersionJob!!.join()
-                    cb(dataVersion!!)
-                }
-            } else {
-                dataVersionJob = GlobalScope.launch(Dispatchers.IO) {
-                    val url = URL("https://udg.swaytwig.com/ver.txt")
-                    with(url.openConnection() as HttpsURLConnection) {
-                        requestMethod = "GET"
-
-                        inputStream.bufferedReader().use {
-                            dataVersion = it.readText()
-                            withContext(Dispatchers.Main) { cb(dataVersion!!) }
-                        }
-                    }
-                }
+        private suspend fun fetchText(url: String) = withContext(Dispatchers.IO) {
+            kotlin.runCatching {
+                val ret = client.request<HttpResponse>(url) { method = HttpMethod.Get }
+                if(ret.status == HttpStatusCode.OK)
+                    return@withContext ret.readText().trim()
             }
+            null
+        }
+
+        private var dataVersion: String? = null
+        suspend fun getDataVersion(): String? {
+            if (dataVersion == null)
+                dataVersion = fetchText("https://udg.swaytwig.com/ver.txt")
+
+            return dataVersion
         }
 
         private var textureList: Array<TextureDataRaw>? = null
-        private var textureListJob: Job? = null
+        suspend fun getTextureList(): Array<TextureDataRaw>? {
+            val ver = getDataVersion()
 
-        fun getTextureList(cb: (textures: Array<TextureDataRaw>) -> Unit) {
-            getDataVersion {
-                val ver = it
+            if (textureList == null) {
+                val content = fetchText("https://udg.swaytwig.com/db/$ver.json") ?: return null
+                val json = JSONObject(content)
+                val keys = json.keys()
+                val list: ArrayList<TextureDataRaw> = arrayListOf()
+                for (key in keys) {
+                    val item = json.getJSONObject(key)
 
-                if (textureList != null)
-                    GlobalScope.launch(Dispatchers.Main) { cb(textureList!!) }
-                else if (textureListJob != null) { // fetching
-                    GlobalScope.launch(Dispatchers.Main) {
-                        textureListJob!!.join()
-                        cb(textureList!!)
-                    }
-                } else {
-                    textureListJob = GlobalScope.launch(Dispatchers.IO) {
-                        val url = URL("https://udg.swaytwig.com/db/${ver}.json")
-                        with(url.openConnection() as HttpsURLConnection) {
-                            requestMethod = "GET"
+                    val hashOneStore = item.getString("onestore")
+                    val hashGoogle = item.getString("google")
 
-                            inputStream.bufferedReader().use {
-                                val json = JSONObject(it.readText())
-                                val keys = json.keys()
-                                val list: ArrayList<TextureDataRaw> = arrayListOf()
-                                for (key in keys) {
-                                    val item = json.getJSONObject(key)
-
-                                    val hashOneStore = item.getString("onestore")
-                                    val hashGoogle = item.getString("google")
-
-                                    list.add(TextureDataRaw(key, hashOneStore, hashGoogle))
-                                }
-                                textureList = list.toArray(arrayOfNulls<TextureDataRaw>(list.size))
-
-                                withContext(Dispatchers.Main) { cb(textureList!!) }
-                            }
-                        }
-                    } // GlobalScope.launch
+                    list.add(TextureDataRaw(key, hashOneStore, hashGoogle))
                 }
-            } // getDataVersion
+                textureList = list.toArray(arrayOfNulls<TextureDataRaw>(list.size))
+            }
+
+            return textureList
         }
     }
 }
