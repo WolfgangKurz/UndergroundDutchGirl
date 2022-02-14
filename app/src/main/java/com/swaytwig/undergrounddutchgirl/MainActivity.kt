@@ -1,24 +1,28 @@
 package com.swaytwig.undergrounddutchgirl
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
+import android.content.Context
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        private const val EXTERNAL_MANAGE_REQUEST_CODE = 3464
+        private const val SAF_REQUEST_CODE = 3465
+    }
+
     private val fragmentHome by lazy { HomeFragment() }
     private val fragmentTexture by lazy { TextureFragment() }
+
+    private val launcherSAF = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == SAF_REQUEST_CODE)
+            checkPermission(true)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,23 +36,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 0)
+        if (requestCode == EXTERNAL_MANAGE_REQUEST_CODE)
             this.checkPermission(false)
     }
 
     private fun checkPermission(need_request: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val permissions = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            ).filter { it != "" }.toTypedArray()
+        val context: Context = this@MainActivity
 
-            if (need_request) {
-                val gr = PackageManager.PERMISSION_GRANTED
-                if (permissions.any { p -> ContextCompat.checkSelfPermission(this, p) != gr })
-                    this.requestPermission(permissions)
-            }
+        val dir = Game.gameAssetDir(context)
+        if(dir.isEmpty()) {
+            Toast.makeText(context, R.string.TARGET_NOT_FOUND, Toast.LENGTH_SHORT).show()
+            return
         }
+
+        if(need_request) {
+            android.util.Log.e("PATH", dir)
+            val intent = SAF.createRequestIntent(context, dir.substringBefore("/files/") + "/")
+            launcherSAF.launch(intent)
+        }
+        /*
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
@@ -63,10 +69,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+        */
     }
 
     private fun requestPermission(permissions: Array<String>) {
-        ActivityCompat.requestPermissions(this, permissions, 0)
+        ActivityCompat.requestPermissions(this, permissions, EXTERNAL_MANAGE_REQUEST_CODE)
         this.checkPermission(false)
 
         for (p in permissions) {

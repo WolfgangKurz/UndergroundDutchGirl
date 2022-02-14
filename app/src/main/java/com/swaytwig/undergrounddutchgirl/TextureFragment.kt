@@ -25,15 +25,6 @@ import javax.net.ssl.HttpsURLConnection
 class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener {
     private val list = ArrayList<TextureData>()
     private var arr = arrayOf<TextureData>()
-    private var baseDir = ""
-
-    private val storages: Array<String> by lazy {
-        ContextCompat.getExternalFilesDirs(requireContext(), null)
-            .filterNotNull()
-            .map { it.path.substringBefore("/Android/data", "") }
-            .filter { it.isNotEmpty() }
-            .toTypedArray()
-    }
 
     private val prefTextureSetKey = "pref_texture_set"
     private val prefTextureSet: SharedPreferences by lazy {
@@ -49,29 +40,14 @@ class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener
 
         val ctx = requireActivity()
 
-        val platformDir = "Android/data/com.smartjoy.LastOrigin_C"
-
-        if (baseDir.isEmpty()) {
-            for (storage in storages) {
-                val dir = "${storage}/${platformDir}/files/UnityCache/Shared"
-                val f = File(dir)
-                if (f.exists()) {
-                    baseDir = dir
-                    break
-                }
-            }
-            if (baseDir.isEmpty()) {
-                Toast.makeText(ctx, R.string.TARGET_NOT_FOUND, Toast.LENGTH_SHORT).show()
-                return v
-            }
-        }
-
 //        val pref = prefTextureSet.getString(prefTextureSetKey, null)
 //        val textureSet = pref?.split("\n")?.associate {
 //            val kv = it.split('=').toTypedArray()
 //            kv[0] to kv[1]
 //        }
 //            ?: mapOf()
+
+        val baseDir = Game.gameAssetDir(requireContext())
 
         TextureDataManager.getTextureList {
             for (item in it) {
@@ -128,6 +104,8 @@ class TextureFragment : ListFragment(), TextureAdapter.ListSwitchChangedListener
 
     private fun doPatch(button: Button) {
         button.isEnabled = false
+
+        val baseDir = Game.gameAssetDir(requireContext())
 
         TextureDataManager.getDataVersion {
             GlobalScope.launch(Dispatchers.IO) {
