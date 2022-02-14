@@ -5,8 +5,7 @@
     <string name="app_name">Underground DutchGirl</string>
     <string name="project_name">Project Underground DutchGirl</string>
     <string name="app_by">by Wolfgang Kurz</string>
-    <!-- <string name="app_link">https://udg.swaytwig.com/</string> -->
-    <string name="app_link">Not available now</string>
+    <string name="app_link">https://udg.swaytwig.com/</string>
 
     <string name="GRANT_PERMISSION_REQUIRED"><![CDATA[
         Storage permissions must be grant to use.<br />

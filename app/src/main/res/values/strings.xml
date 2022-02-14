@@ -5,8 +5,7 @@
     <string name="app_name">Underground DutchGirl</string>
     <string name="project_name">Project Underground DutchGirl</string>
     <string name="app_by">by Wolfgang Kurz</string>
-    <!-- <string name="app_link">https://udg.swaytwig.com/</string> -->
-    <string name="app_link">현재 사용 불가능</string>
+    <string name="app_link">https://udg.swaytwig.com/</string>
 
     <string name="GRANT_PERMISSION_REQUIRED"><![CDATA[
         사용하기 위해서는 저장소 권한을 설정해야합니다.<br />
